@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>人生グラフ — ライフライン</title>
+<style>
+  :root{
+    --ink:#3a2c22;
+    --ink-soft:#917a66;
+    --paper:#fdf3e7;
+    --card:#fffaf2;
+    --line:#ecd6bb;
+    --pos:#e08b2e;     /* 暖色アンバー（プラス側） */
+    --pos-fill:#e08b2e1f;
+    --neg:#c75a45;     /* テラコッタ（マイナス側） */
+    --neg-fill:#c75a4520;
+    --axis:#bda079;
+    --accent:#ec6a1f;  /* ライン＝オレンジ */
+    --add:#ed6a1e;     /* 追加ボタン */
+    --add-dark:#cf560f;
+    --shadow:0 1px 2px #3a2c2210, 0 8px 24px #3a2c2214;
+  }
+  *{box-sizing:border-box}
+  body{
+    margin:0; background:var(--paper); color:var(--ink);
+    font-family:"Hiragino Kaku Gothic ProN","Yu Gothic",Meiryo,system-ui,sans-serif;
+    line-height:1.6; padding:24px 16px 64px;
+  }
+  .wrap{max-width:980px; margin:0 auto}
+  header{margin-bottom:20px}
+  h1{font-size:22px; font-weight:700; margin:0 0 4px; letter-spacing:.02em}
+  .sub{color:var(--ink-soft); font-size:13px; margin:0}
+  .meta{display:flex; gap:12px; flex-wrap:wrap; margin:14px 0 0}
+  .meta label{font-size:12px; color:var(--ink-soft); display:flex; flex-direction:column; gap:3px}
+  .meta input{
+    border:1px solid var(--line); background:var(--card); border-radius:8px;
+    padding:7px 10px; font-size:14px; color:var(--ink); min-width:180px;
+  }
+
+  /* chart */
+  .chartcard{background:var(--card); border:1px solid var(--line); border-radius:14px;
+    padding:14px 10px 6px; box-shadow:var(--shadow); margin:18px 0}
+  svg{display:block; width:100%; height:auto}
+  .pt{cursor:pointer; transition:r .12s}
+  .pt:hover{r:8}
+
+  /* table */
+  .rows{display:flex; flex-direction:column; gap:10px}
+  .row{background:var(--card); border:1px solid var(--line); border-radius:12px;
+    padding:12px 14px; box-shadow:var(--shadow); display:grid;
+    grid-template-columns:1fr auto; gap:10px 16px; align-items:start}
+  .row .top{grid-column:1 / 2; display:flex; gap:12px; align-items:center; flex-wrap:wrap}
+  .row .label-in{border:none; border-bottom:1.5px solid var(--line); background:transparent;
+    font-size:15px; font-weight:700; color:var(--ink); padding:2px 0; min-width:90px; flex:0 0 auto}
+  .row .label-in:focus{outline:none; border-bottom-color:var(--accent)}
+  .slider-box{display:flex; align-items:center; gap:10px; flex:1 1 240px; min-width:200px}
+  input[type=range]{flex:1; accent-color:var(--accent)}
+  .score{font-variant-numeric:tabular-nums; font-weight:700; width:46px; text-align:right;
+    font-size:15px}
+  .score.p{color:var(--pos)} .score.n{color:var(--neg)} .score.z{color:var(--ink-soft)}
+  .memo{grid-column:1 / 2; width:100%; border:1px solid var(--line); background:#fffefb;
+    border-radius:8px; padding:8px 10px; font-size:13px; color:var(--ink); resize:vertical;
+    min-height:42px; font-family:inherit}
+  .memo:focus{outline:none; border-color:var(--accent)}
+  .memo::placeholder{color:#b3ab9d}
+  .ctrls{grid-column:2 / 3; grid-row:1 / 3; display:flex; flex-direction:column; gap:4px}
+  .ctrls button{border:1px solid var(--line); background:#fff; color:var(--ink-soft);
+    border-radius:7px; width:30px; height:28px; cursor:pointer; font-size:14px; line-height:1}
+  .ctrls button:hover{border-color:var(--accent); color:var(--accent)}
+  .ctrls .del:hover{border-color:var(--neg); color:var(--neg)}
+
+  .add-row{display:flex; justify-content:center; margin:22px 0 6px}
+  .btn.add{
+    background:var(--add); color:#fff; border:none; border-radius:12px;
+    padding:14px 40px; font-size:16px; font-weight:700; cursor:pointer;
+    box-shadow:0 4px 14px #ed6a1e45; letter-spacing:.03em; transition:transform .08s, background .15s;
+  }
+  .btn.add:hover{background:var(--add-dark); transform:translateY(-1px)}
+  .btn.add:active{transform:translateY(0)}
+
+  .bar{display:flex; gap:10px; flex-wrap:wrap; margin:10px 0 0; align-items:center; justify-content:center}
+  .btn{border:1px solid var(--line); background:var(--card); color:var(--ink);
+    border-radius:9px; padding:9px 16px; font-size:14px; cursor:pointer; font-weight:600}
+  .btn:hover{border-color:var(--accent); color:var(--accent)}
+  .btn.primary{background:var(--accent); color:#fff; border-color:var(--accent)}
+  .btn.primary:hover{background:var(--add-dark); color:#fff; border-color:var(--add-dark)}
+  .btn.ghost{color:var(--ink-soft)}
+  .saved{font-size:12px; color:var(--ink-soft); align-self:center}
+
+  @media (max-width:560px){
+    .row{grid-template-columns:1fr auto}
+    .slider-box{flex-basis:100%}
+    .btn.add{width:100%; padding:14px}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <h1>人生グラフ — ライフライン</h1>
+    <p class="sub">各時期の充実度を −100〜+100 で記録し、出来事をメモします。点をクリックすると出来事を確認できます。</p>
+    <div class="meta">
+      <label>クライエント名 / ID（任意）
+        <input id="clientName" type="text" placeholder="例：A.S さん">
+      </label>
+      <label>記録日（任意）
+        <input id="sessionDate" type="text" placeholder="例：2026/06/10">
+      </label>
+    </div>
+  </header>
+
+  <div class="chartcard">
+    <svg id="chart" viewBox="0 0 900 420" aria-label="人生グラフ"></svg>
+  </div>
+
+  <div id="rows" class="rows"></div>
+
+  <div class="add-row">
+    <button class="btn add" id="addBtn">＋ 時期を追加</button>
+  </div>
+
+  <div class="bar">
+    <label class="saved" style="display:flex;align-items:center;gap:6px;cursor:pointer">
+      <input type="checkbox" id="bubbleToggle" checked> 出来事を吹き出し表示
+    </label>
+    <button class="btn primary" id="pngBtn">画像で書き出し（PNG）</button>
+    <button class="btn ghost" id="resetBtn">リセット</button>
+    <span class="saved" id="savedMsg"></span>
+  </div>
+</div>
+
+<script>
+const DEFAULTS = [
+  {label:"幼少期", score:0,  memo:""},
+  {label:"小学生", score:0,  memo:""},
+  {label:"中学生", score:0,  memo:""},
+  {label:"高校生", score:0,  memo:""},
+];
+let data = [];
+let meta = {clientName:"", sessionDate:""};
+let showBubbles = true;
+
+const rowsEl = document.getElementById("rows");
+const chart  = document.getElementById("chart");
+const savedMsg = document.getElementById("savedMsg");
+
+/* ---------- 保存（ブラウザ内・自動） ---------- */
+async function save(){
+  try{
+    await window.storage.set("lifegraph:data", JSON.stringify({data, meta}));
+    flash("保存しました");
+  }catch(e){ /* 保存不可環境でも操作は継続 */ }
+}
+function flash(t){ savedMsg.textContent = t; clearTimeout(flash._t);
+  flash._t = setTimeout(()=>savedMsg.textContent="", 1600); }
+
+async function load(){
+  try{
+    const r = await window.storage.get("lifegraph:data");
+    if(r && r.value){ const o = JSON.parse(r.value); data=o.data||[]; meta=o.meta||meta; }
+  }catch(e){}
+  if(!data.length) data = JSON.parse(JSON.stringify(DEFAULTS));
+  document.getElementById("clientName").value = meta.clientName||"";
+  document.getElementById("sessionDate").value = meta.sessionDate||"";
+}
+
+/* ---------- 行UI ---------- */
+function scoreClass(v){ return v>0?"p":v<0?"n":"z"; }
+
+function render(){
+  rowsEl.innerHTML="";
+  data.forEach((d,i)=>{
+    const row = document.createElement("div");
+    row.className="row";
+    row.innerHTML = `
+      <div class="top">
+        <input class="label-in" value="${esc(d.label)}" data-i="${i}" data-k="label" placeholder="時期名">
+        <div class="slider-box">
+          <input type="range" min="-100" max="100" step="1" value="${d.score}" data-i="${i}" data-k="score">
+          <span class="score ${scoreClass(d.score)}" data-score="${i}">${d.score>0?"+":""}${d.score}</span>
+        </div>
+      </div>
+      <textarea class="memo" data-i="${i}" data-k="memo" placeholder="この時期の出来事・気持ち…">${esc(d.memo)}</textarea>
+      <div class="ctrls">
+        <button data-up="${i}" title="上へ">▲</button>
+        <button data-down="${i}" title="下へ">▼</button>
+        <button class="del" data-del="${i}" title="削除">✕</button>
+      </div>`;
+    rowsEl.appendChild(row);
+  });
+  draw();
+}
+function esc(s){ return (s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
+
+/* イベント委任 */
+rowsEl.addEventListener("input", e=>{
+  const t=e.target, i=+t.dataset.i, k=t.dataset.k;
+  if(k==null) return;
+  if(k==="score"){
+    data[i].score = +t.value;
+    const s=document.querySelector(`[data-score="${i}"]`);
+    s.textContent = (data[i].score>0?"+":"")+data[i].score;
+    s.className = "score "+scoreClass(data[i].score);
+    draw();
+  }else{
+    data[i][k] = t.value;
+    if(k==="label" || k==="memo") draw();
+  }
+});
+rowsEl.addEventListener("change", save);
+rowsEl.addEventListener("click", e=>{
+  const b=e.target;
+  if(b.dataset.del!=null){ if(data.length>1){ data.splice(+b.dataset.del,1); render(); save(); } }
+  else if(b.dataset.up!=null){ const i=+b.dataset.up; if(i>0){ [data[i-1],data[i]]=[data[i],data[i-1]]; render(); save(); } }
+  else if(b.dataset.down!=null){ const i=+b.dataset.down; if(i<data.length-1){ [data[i+1],data[i]]=[data[i],data[i+1]]; render(); save(); } }
+});
+
+document.getElementById("addBtn").onclick=()=>{ data.push({label:"新しい時期",score:0,memo:""}); render(); save(); };
+document.getElementById("bubbleToggle").onchange=e=>{ showBubbles=e.target.checked; draw(); };
+document.getElementById("resetBtn").onclick=()=>{
+  if(confirm("入力内容をすべて消去して初期状態に戻します。よろしいですか？")){
+    data=JSON.parse(JSON.stringify(DEFAULTS)); meta={clientName:"",sessionDate:""};
+    document.getElementById("clientName").value=""; document.getElementById("sessionDate").value="";
+    render(); save();
+  }
+};
+document.getElementById("clientName").addEventListener("input",e=>{meta.clientName=e.target.value;});
+document.getElementById("sessionDate").addEventListener("input",e=>{meta.sessionDate=e.target.value;});
+document.getElementById("clientName").addEventListener("change",save);
+document.getElementById("sessionDate").addEventListener("change",save);
+
+/* ---------- チャート描画 ---------- */
+const W=900,H=420, padL=54,padR=24,padT=24,padB=64;
+const plotW=W-padL-padR, plotH=H-padT-padB;
+const yOf = v => padT + (100-v)/200*plotH;     // +100 上, -100 下
+const xOf = (i,n) => n<=1? padL+plotW/2 : padL + i/(n-1)*plotW;
+
+// メモを行に折り返す（全角約10字/行・最大3行）
+function wrapText(t, max=10, maxLines=3){
+  t=(t||"").replace(/\r/g,"");
+  const out=[];
+  t.split("\n").forEach(para=>{
+    let line="";
+    for(const ch of para){
+      if(line.length>=max){ out.push(line); line=""; }
+      line+=ch;
+    }
+    out.push(line);
+  });
+  let lines=out.filter((l,i)=>l!=="" || out.length===1);
+  if(lines.length>maxLines){ lines=lines.slice(0,maxLines); lines[maxLines-1]=lines[maxLines-1].slice(0,max-1)+"…"; }
+  return lines;
+}
+
+function draw(){
+  const n=data.length;
+  let s=`<defs>
+    <linearGradient id="posg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="var(--pos)" stop-opacity=".18"/>
+      <stop offset="1" stop-color="var(--pos)" stop-opacity="0"/>
+    </linearGradient></defs>`;
+
+  // 上下ゾーン背景
+  const yZero=yOf(0);
+  s+=`<rect x="${padL}" y="${padT}" width="${plotW}" height="${yZero-padT}" fill="var(--pos-fill)"/>`;
+  s+=`<rect x="${padL}" y="${yZero}" width="${plotW}" height="${padT+plotH-yZero}" fill="var(--neg-fill)"/>`;
+
+  // 横グリッド
+  [100,50,0,-50,-100].forEach(v=>{
+    const y=yOf(v), zero=v===0;
+    s+=`<line x1="${padL}" y1="${y}" x2="${padL+plotW}" y2="${y}"
+        stroke="${zero?'var(--axis)':'var(--line)'}" stroke-width="${zero?2:1}"/>`;
+    s+=`<text x="${padL-10}" y="${y+4}" text-anchor="end" font-size="12" fill="var(--ink-soft)">${v>0?'+':''}${v}</text>`;
+  });
+
+  // 折れ線
+  const pts = data.map((d,i)=>[xOf(i,n), yOf(d.score)]);
+  if(n>=2){
+    let path="M"+pts.map(p=>p[0]+" "+p[1]).join(" L ");
+    s+=`<path d="${path}" fill="none" stroke="var(--accent)" stroke-width="2.5"
+        stroke-linejoin="round" stroke-linecap="round"/>`;
+  }
+
+  // 吹き出し（メモがある点のみ）
+  if(showBubbles){
+    const FW=13.5, lineH=17, pad=9;
+    data.forEach((d,i)=>{
+      if(!d.memo || !d.memo.trim()) return;
+      const [x,y]=pts[i];
+      const lines=wrapText(d.memo.trim());
+      const bw=Math.min(plotW-8, Math.max(...lines.map(l=>l.length))*FW + pad*2);
+      const bh=lines.length*lineH + pad*2;
+      const below = d.score>=0;                 // 上半分の点→下に、下半分→上に出す
+      const gap=16;
+      let by = below ? y+gap : y-gap-bh;
+      by=Math.max(padT+2, Math.min(by, padT+plotH-bh-2));
+      let bx=Math.max(padL+2, Math.min(x-bw/2, padL+plotW-bw-2));
+      // 吹き出し本体
+      s+=`<rect x="${bx}" y="${by}" width="${bw}" height="${bh}" rx="9"
+           fill="var(--card)" stroke="var(--line)" stroke-width="1"/>`;
+      // しっぽ（点の方向へ）
+      const tipX=Math.max(bx+12, Math.min(x, bx+bw-12));
+      if(below){
+        s+=`<path d="M${tipX-7} ${by} L${tipX+7} ${by} L${tipX} ${by-9} Z" fill="var(--card)" stroke="var(--line)" stroke-width="1"/>
+            <rect x="${tipX-6}" y="${by-1}" width="12" height="2" fill="var(--card)"/>`;
+      }else{
+        const e=by+bh;
+        s+=`<path d="M${tipX-7} ${e} L${tipX+7} ${e} L${tipX} ${e+9} Z" fill="var(--card)" stroke="var(--line)" stroke-width="1"/>
+            <rect x="${tipX-6}" y="${e-1}" width="12" height="2" fill="var(--card)"/>`;
+      }
+      // テキスト
+      lines.forEach((l,li)=>{
+        s+=`<text x="${bx+pad}" y="${by+pad+13+li*lineH}" font-size="13" fill="var(--ink)">${esc(l)}</text>`;
+      });
+    });
+  }
+
+  // 点 + ラベル + スコア
+  data.forEach((d,i)=>{
+    const [x,y]=pts[i];
+    const col = d.score>0?'var(--pos)':d.score<0?'var(--neg)':'var(--axis)';
+    s+=`<circle class="pt" cx="${x}" cy="${y}" r="6" fill="#fff" stroke="${col}" stroke-width="3"
+         data-pt="${i}"><title>${esc(d.label)}（${d.score>0?'+':''}${d.score}）${d.memo?'\n'+esc(d.memo):''}</title></circle>`;
+    s+=`<text x="${x}" y="${padT+plotH+22}" text-anchor="middle" font-size="13"
+        fill="var(--ink)" font-weight="600">${esc(d.label)}</text>`;
+    const above = d.score>=0;
+    s+=`<text x="${x}" y="${y+(above?-11:19)}" text-anchor="middle" font-size="11"
+        fill="${col}" font-weight="700">${d.score>0?'+':''}${d.score}</text>`;
+  });
+
+  chart.innerHTML=s;
+}
+
+/* 点クリックで出来事表示 */
+chart.addEventListener("click", e=>{
+  const c=e.target.closest("[data-pt]"); if(!c) return;
+  const d=data[+c.dataset.pt];
+  alert(`【${d.label}】 ${d.score>0?'+':''}${d.score}点\n\n${d.memo||'（出来事メモなし）'}`);
+});
+
+/* ---------- PNG書き出し ---------- */
+document.getElementById("pngBtn").onclick=()=>{
+  // CSS変数を実値に置換したSVGを生成
+  const cs=getComputedStyle(document.documentElement);
+  const vars=["--ink","--ink-soft","--paper","--card","--line","--pos","--neg","--axis","--accent","--pos-fill","--neg-fill"];
+  let raw = chart.outerHTML;
+  vars.forEach(v=>{ raw=raw.split(`var(${v})`).join(cs.getPropertyValue(v).trim()); });
+  // タイトル帯を足す
+  const title=(meta.clientName?meta.clientName+'　':'')+'人生グラフ'+(meta.sessionDate?'　'+meta.sessionDate:'');
+  raw = raw.replace('viewBox="0 0 900 420"','viewBox="0 0 900 470"');
+  raw = raw.replace('</svg>',
+    `<rect x="0" y="420" width="900" height="50" fill="${cs.getPropertyValue('--card').trim()}"/>
+     <text x="20" y="452" font-size="16" font-weight="700" fill="${cs.getPropertyValue('--ink').trim()}"
+     font-family="sans-serif">${esc(title)}</text></svg>`);
+  raw = raw.replace('<svg ', `<svg xmlns="http://www.w3.org/2000/svg" style="background:${cs.getPropertyValue('--card').trim()}" `);
+
+  const img=new Image();
+  const blob=new Blob([raw],{type:"image/svg+xml;charset=utf-8"});
+  const url=URL.createObjectURL(blob);
+  img.onload=()=>{
+    const sc=2, cv=document.createElement("canvas");
+    cv.width=900*sc; cv.height=470*sc;
+    const ctx=cv.getContext("2d");
+    ctx.fillStyle=cs.getPropertyValue('--card').trim(); ctx.fillRect(0,0,cv.width,cv.height);
+    ctx.drawImage(img,0,0,cv.width,cv.height);
+    URL.revokeObjectURL(url);
+    cv.toBlob(b=>{
+      const a=document.createElement("a");
+      a.href=URL.createObjectURL(b);
+      a.download=(meta.clientName||"lifegraph")+".png";
+      a.click();
+    });
+  };
+  img.src=url;
+};
+
+/* ---------- 起動 ---------- */
+(async()=>{ await load(); render(); })();
+</script>
+</body>
+</html>
