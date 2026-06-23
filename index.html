@@ -40,8 +40,9 @@
 
   /* chart */
   .chartcard{background:var(--card); border:1px solid var(--line); border-radius:14px;
-    padding:14px 10px 6px; box-shadow:var(--shadow); margin:18px 0}
-  svg{display:block; width:100%; height:auto}
+    padding:18px 16px; box-shadow:var(--shadow); margin:18px 0; overflow-x:auto}
+  .chartcard svg{display:block; height:auto; max-width:none; margin:0 auto}
+  .scrollhint{font-size:11px; color:var(--ink-soft); text-align:center; margin:-8px 0 12px}
   .pt{cursor:pointer; transition:r .12s}
   .pt:hover{r:8}
 
@@ -111,8 +112,9 @@
   </header>
 
   <div class="chartcard">
-    <svg id="chart" viewBox="0 0 900 420" aria-label="人生グラフ"></svg>
+    <svg id="chart" aria-label="人生グラフ"></svg>
   </div>
+  <p class="scrollhint">※ 時期が多いときは、グラフを左右にスクロールできます</p>
 
   <div id="rows" class="rows"></div>
 
@@ -231,13 +233,13 @@ document.getElementById("clientName").addEventListener("change",save);
 document.getElementById("sessionDate").addEventListener("change",save);
 
 /* ---------- チャート描画 ---------- */
-const W=900,H=420, padL=54,padR=24,padT=24,padB=64;
-const plotW=W-padL-padR, plotH=H-padT-padB;
-const yOf = v => padT + (100-v)/200*plotH;     // +100 上, -100 下
-const xOf = (i,n) => n<=1? padL+plotW/2 : padL + i/(n-1)*plotW;
+let LW=900, LH=600;  // 直近のレイアウト寸法（PNG用）
+const padL=64, padR=48, padTop=24;
+const TOPH=120, PLOTH=300, BOTH=120, LABELH=60;  // 上吹き出し帯 / 線領域 / 下吹き出し帯 / ラベル
+const SP=140;  // 1点あたりの横幅
 
-// メモを行に折り返す（全角約10字/行・最大3行）
-function wrapText(t, max=10, maxLines=3){
+// メモを行に折り返す（全角約14字/行・最大3行）
+function wrapText(t, max=14, maxLines=3){
   t=(t||"").replace(/\r/g,"");
   const out=[];
   t.split("\n").forEach(para=>{
@@ -248,85 +250,94 @@ function wrapText(t, max=10, maxLines=3){
     }
     out.push(line);
   });
-  let lines=out.filter((l,i)=>l!=="" || out.length===1);
+  let lines=out.filter(l=>l!=="" );
+  if(!lines.length) lines=[""];
   if(lines.length>maxLines){ lines=lines.slice(0,maxLines); lines[maxLines-1]=lines[maxLines-1].slice(0,max-1)+"…"; }
   return lines;
 }
 
 function draw(){
   const n=data.length;
-  let s=`<defs>
-    <linearGradient id="posg" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0" stop-color="var(--pos)" stop-opacity=".18"/>
-      <stop offset="1" stop-color="var(--pos)" stop-opacity="0"/>
-    </linearGradient></defs>`;
+  const plotW=Math.max(620, SP*(n-1));
+  const W=padL+plotW+padR;
+  const H=padTop+TOPH+PLOTH+BOTH+LABELH;
+  LW=W; LH=H;
+  const plotTop=padTop+TOPH, plotBottom=plotTop+PLOTH;
+  const yOf=v=>plotTop+(100-v)/200*PLOTH;
+  const xOf=i=> n<=1? padL+plotW/2 : padL+i/(n-1)*plotW;
+
+  chart.setAttribute("viewBox",`0 0 ${W} ${H}`);
+  chart.setAttribute("width", W);
+  chart.setAttribute("height", H);
+
+  let s="";
 
   // 上下ゾーン背景
   const yZero=yOf(0);
-  s+=`<rect x="${padL}" y="${padT}" width="${plotW}" height="${yZero-padT}" fill="var(--pos-fill)"/>`;
-  s+=`<rect x="${padL}" y="${yZero}" width="${plotW}" height="${padT+plotH-yZero}" fill="var(--neg-fill)"/>`;
+  s+=`<rect x="${padL}" y="${plotTop}" width="${plotW}" height="${yZero-plotTop}" fill="var(--pos-fill)"/>`;
+  s+=`<rect x="${padL}" y="${yZero}" width="${plotW}" height="${plotBottom-yZero}" fill="var(--neg-fill)"/>`;
 
   // 横グリッド
   [100,50,0,-50,-100].forEach(v=>{
     const y=yOf(v), zero=v===0;
     s+=`<line x1="${padL}" y1="${y}" x2="${padL+plotW}" y2="${y}"
         stroke="${zero?'var(--axis)':'var(--line)'}" stroke-width="${zero?2:1}"/>`;
-    s+=`<text x="${padL-10}" y="${y+4}" text-anchor="end" font-size="12" fill="var(--ink-soft)">${v>0?'+':''}${v}</text>`;
+    s+=`<text x="${padL-12}" y="${y+4}" text-anchor="end" font-size="12" fill="var(--ink-soft)">${v>0?'+':''}${v}</text>`;
   });
 
+  const pts=data.map((d,i)=>[xOf(i),yOf(d.score)]);
+
   // 折れ線
-  const pts = data.map((d,i)=>[xOf(i,n), yOf(d.score)]);
   if(n>=2){
     let path="M"+pts.map(p=>p[0]+" "+p[1]).join(" L ");
     s+=`<path d="${path}" fill="none" stroke="var(--accent)" stroke-width="2.5"
         stroke-linejoin="round" stroke-linecap="round"/>`;
   }
 
-  // 吹き出し（メモがある点のみ）
+  // 吹き出し（上下レーンに交互配置・線には絶対重ねない）
   if(showBubbles){
-    const FW=13.5, lineH=17, pad=9;
+    const FS=11, lineH=15, pad=7, FW=FS*1.0;
     data.forEach((d,i)=>{
       if(!d.memo || !d.memo.trim()) return;
       const [x,y]=pts[i];
       const lines=wrapText(d.memo.trim());
-      const bw=Math.min(plotW-8, Math.max(...lines.map(l=>l.length))*FW + pad*2);
+      const bw=Math.max(...lines.map(l=>l.length))*FW + pad*2;
       const bh=lines.length*lineH + pad*2;
-      const below = d.score>=0;                 // 上半分の点→下に、下半分→上に出す
-      const gap=16;
-      let by = below ? y+gap : y-gap-bh;
-      by=Math.max(padT+2, Math.min(by, padT+plotH-bh-2));
-      let bx=Math.max(padL+2, Math.min(x-bw/2, padL+plotW-bw-2));
+      const top = (i%2===0);   // 偶数=上レーン / 奇数=下レーン
+      const anchorY = top ? plotTop-18 : plotBottom+18;
+      const by = top ? anchorY-bh : anchorY;
+      let bx=Math.max(padL, Math.min(x-bw/2, W-padR-bw));
+      const leaderX=Math.max(bx+12, Math.min(x, bx+bw-12));
+      const edgeY = top ? by+bh : by;
+      // リーダー線（点 → 吹き出し）
+      s+=`<line x1="${x}" y1="${y}" x2="${leaderX}" y2="${edgeY}" stroke="var(--accent)" stroke-width="1" opacity=".5"/>`;
       // 吹き出し本体
-      s+=`<rect x="${bx}" y="${by}" width="${bw}" height="${bh}" rx="9"
+      s+=`<rect x="${bx}" y="${by}" width="${bw}" height="${bh}" rx="8"
            fill="var(--card)" stroke="var(--line)" stroke-width="1"/>`;
-      // しっぽ（点の方向へ）
-      const tipX=Math.max(bx+12, Math.min(x, bx+bw-12));
-      if(below){
-        s+=`<path d="M${tipX-7} ${by} L${tipX+7} ${by} L${tipX} ${by-9} Z" fill="var(--card)" stroke="var(--line)" stroke-width="1"/>
-            <rect x="${tipX-6}" y="${by-1}" width="12" height="2" fill="var(--card)"/>`;
-      }else{
-        const e=by+bh;
-        s+=`<path d="M${tipX-7} ${e} L${tipX+7} ${e} L${tipX} ${e+9} Z" fill="var(--card)" stroke="var(--line)" stroke-width="1"/>
-            <rect x="${tipX-6}" y="${e-1}" width="12" height="2" fill="var(--card)"/>`;
-      }
-      // テキスト
       lines.forEach((l,li)=>{
-        s+=`<text x="${bx+pad}" y="${by+pad+13+li*lineH}" font-size="13" fill="var(--ink)">${esc(l)}</text>`;
+        s+=`<text x="${bx+pad}" y="${by+pad+12+li*lineH}" font-size="${FS}" fill="var(--ink)">${esc(l)}</text>`;
       });
     });
   }
 
-  // 点 + ラベル + スコア
+  // 点 + スコア値
   data.forEach((d,i)=>{
     const [x,y]=pts[i];
-    const col = d.score>0?'var(--pos)':d.score<0?'var(--neg)':'var(--axis)';
+    const col=d.score>0?'var(--pos)':d.score<0?'var(--neg)':'var(--axis)';
     s+=`<circle class="pt" cx="${x}" cy="${y}" r="6" fill="#fff" stroke="${col}" stroke-width="3"
          data-pt="${i}"><title>${esc(d.label)}（${d.score>0?'+':''}${d.score}）${d.memo?'\n'+esc(d.memo):''}</title></circle>`;
-    s+=`<text x="${x}" y="${padT+plotH+22}" text-anchor="middle" font-size="13"
-        fill="var(--ink)" font-weight="600">${esc(d.label)}</text>`;
-    const above = d.score>=0;
-    s+=`<text x="${x}" y="${y+(above?-11:19)}" text-anchor="middle" font-size="11"
+    const above=d.score>=0;
+    s+=`<text x="${x}" y="${y+(above?-12:20)}" text-anchor="middle" font-size="11"
         fill="${col}" font-weight="700">${d.score>0?'+':''}${d.score}</text>`;
+  });
+
+  // 時期ラベル（互い違いに段差をつけて重なり回避）
+  const labelBase=plotBottom+BOTH+24;
+  data.forEach((d,i)=>{
+    const x=xOf(i), dy=(i%2)*20;
+    if(i%2) s+=`<line x1="${x}" y1="${labelBase-14}" x2="${x}" y2="${labelBase+dy-14}" stroke="var(--line)" stroke-width="1"/>`;
+    s+=`<text x="${x}" y="${labelBase+dy}" text-anchor="middle" font-size="12"
+        fill="var(--ink)" font-weight="600">${esc(d.label)}</text>`;
   });
 
   chart.innerHTML=s;
@@ -340,39 +351,62 @@ chart.addEventListener("click", e=>{
 });
 
 /* ---------- PNG書き出し ---------- */
-document.getElementById("pngBtn").onclick=()=>{
-  // CSS変数を実値に置換したSVGを生成
-  const cs=getComputedStyle(document.documentElement);
-  const vars=["--ink","--ink-soft","--paper","--card","--line","--pos","--neg","--axis","--accent","--pos-fill","--neg-fill"];
-  let raw = chart.outerHTML;
-  vars.forEach(v=>{ raw=raw.split(`var(${v})`).join(cs.getPropertyValue(v).trim()); });
-  // タイトル帯を足す
-  const title=(meta.clientName?meta.clientName+'　':'')+'人生グラフ'+(meta.sessionDate?'　'+meta.sessionDate:'');
-  raw = raw.replace('viewBox="0 0 900 420"','viewBox="0 0 900 470"');
-  raw = raw.replace('</svg>',
-    `<rect x="0" y="420" width="900" height="50" fill="${cs.getPropertyValue('--card').trim()}"/>
-     <text x="20" y="452" font-size="16" font-weight="700" fill="${cs.getPropertyValue('--ink').trim()}"
-     font-family="sans-serif">${esc(title)}</text></svg>`);
-  raw = raw.replace('<svg ', `<svg xmlns="http://www.w3.org/2000/svg" style="background:${cs.getPropertyValue('--card').trim()}" `);
+function showPngOverlay(pngUrl){
+  let ov=document.getElementById("pngOverlay");
+  if(ov) ov.remove();
+  ov=document.createElement("div");
+  ov.id="pngOverlay";
+  ov.style.cssText="position:fixed;inset:0;background:#3a2c22cc;z-index:9999;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:20px";
+  ov.innerHTML=`
+    <div style="color:#fff;font-size:13px;text-align:center">画像ができました。下のボタンで保存、または画像を長押し／右クリックで保存できます。</div>
+    <img src="${pngUrl}" style="max-width:92vw;max-height:72vh;border-radius:10px;box-shadow:0 8px 40px #0006;background:#fff">
+    <div style="display:flex;gap:10px">
+      <a href="${pngUrl}" download="${(meta.clientName||'lifegraph')}.png"
+         style="background:#ed6a1e;color:#fff;text-decoration:none;font-weight:700;padding:11px 22px;border-radius:10px;font-size:14px">⬇ ダウンロード</a>
+      <button id="pngClose" style="background:#fff;border:none;padding:11px 22px;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer">閉じる</button>
+    </div>`;
+  document.body.appendChild(ov);
+  ov.querySelector("#pngClose").onclick=()=>ov.remove();
+  ov.addEventListener("click",e=>{ if(e.target===ov) ov.remove(); });
+}
 
-  const img=new Image();
-  const blob=new Blob([raw],{type:"image/svg+xml;charset=utf-8"});
-  const url=URL.createObjectURL(blob);
-  img.onload=()=>{
-    const sc=2, cv=document.createElement("canvas");
-    cv.width=900*sc; cv.height=470*sc;
-    const ctx=cv.getContext("2d");
-    ctx.fillStyle=cs.getPropertyValue('--card').trim(); ctx.fillRect(0,0,cv.width,cv.height);
-    ctx.drawImage(img,0,0,cv.width,cv.height);
-    URL.revokeObjectURL(url);
-    cv.toBlob(b=>{
-      const a=document.createElement("a");
-      a.href=URL.createObjectURL(b);
-      a.download=(meta.clientName||"lifegraph")+".png";
-      a.click();
-    });
-  };
-  img.src=url;
+document.getElementById("pngBtn").onclick=()=>{
+  try{
+    const cs=getComputedStyle(document.documentElement);
+    const vars=["--ink","--ink-soft","--paper","--card","--line","--pos","--neg","--axis","--accent","--pos-fill","--neg-fill"];
+    let raw = chart.outerHTML;
+    vars.forEach(v=>{ raw=raw.split(`var(${v})`).join(cs.getPropertyValue(v).trim()); });
+
+    const BAND=52, fullH=LH+BAND;
+    const title=(meta.clientName?meta.clientName+'　':'')+'人生グラフ'+(meta.sessionDate?'　'+meta.sessionDate:'');
+    raw = raw.replace(`viewBox="0 0 ${LW} ${LH}"`,`viewBox="0 0 ${LW} ${fullH}"`)
+             .replace(`height="${LH}"`,`height="${fullH}"`);
+    raw = raw.replace('</svg>',
+      `<text x="${LW/2}" y="${LH+34}" text-anchor="middle" font-size="17" font-weight="700"
+       fill="${cs.getPropertyValue('--ink').trim()}" font-family="sans-serif">${esc(title)}</text></svg>`);
+    raw = raw.replace('<svg ', `<svg xmlns="http://www.w3.org/2000/svg" style="background:${cs.getPropertyValue('--paper').trim()}" `);
+
+    const svgUrl="data:image/svg+xml;charset=utf-8,"+encodeURIComponent(raw);
+    const img=new Image();
+    img.onload=()=>{
+      try{
+        const sc=2, cv=document.createElement("canvas");
+        cv.width=LW*sc; cv.height=fullH*sc;
+        const ctx=cv.getContext("2d");
+        ctx.fillStyle=cs.getPropertyValue('--paper').trim(); ctx.fillRect(0,0,cv.width,cv.height);
+        ctx.drawImage(img,0,0,cv.width,cv.height);
+        const pngUrl=cv.toDataURL("image/png");
+        // 自動ダウンロード試行
+        const a=document.createElement("a");
+        a.href=pngUrl; a.download=(meta.clientName||"lifegraph")+".png";
+        document.body.appendChild(a); a.click(); a.remove();
+        // 確実に保存できるよう画像も表示
+        showPngOverlay(pngUrl);
+      }catch(err){ alert("画像の生成に失敗しました：\n"+err.message); }
+    };
+    img.onerror=()=>alert("画像の読み込みに失敗しました。時期数やメモを少し減らして再度お試しください。");
+    img.src=svgUrl;
+  }catch(err){ alert("書き出しエラー：\n"+err.message); }
 };
 
 /* ---------- 起動 ---------- */
