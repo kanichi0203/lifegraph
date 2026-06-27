@@ -25,7 +25,7 @@
   .fields{display:flex; gap:14px; flex-wrap:wrap}
   .fields label{font-size:12px; color:var(--ink-soft); display:flex; flex-direction:column; gap:3px}
   .fields input{border:1px solid var(--line); background:#fffefb; border-radius:8px;
-    padding:7px 10px; font-size:14px; color:var(--ink); width:130px}
+    padding:7px 10px; font-size:14px; color:var(--ink); width:150px}
 
   .chartcard{background:var(--card); border:1px solid var(--line); border-radius:14px;
     padding:14px 14px; box-shadow:var(--shadow); margin:16px 0}
@@ -43,43 +43,21 @@
   #chart.draw{touch-action:none; cursor:ns-resize}
   .pt{cursor:pointer}
 
-  .phase-add{display:flex; gap:10px; flex-wrap:wrap; align-items:flex-end}
-  .phase-add label{font-size:12px; color:var(--ink-soft); display:flex; flex-direction:column; gap:3px}
-  .phase-add select,.phase-add input[type=text]{border:1px solid var(--line); background:#fffefb;
-    border-radius:8px; padding:7px 9px; font-size:14px; color:var(--ink)}
-  .phase-add input[type=text]{min-width:150px}
-  .phase-add input[type=color]{width:42px; height:38px; border:1px solid var(--line); border-radius:8px; background:#fff; padding:2px; cursor:pointer}
-  .phase-list{display:flex; flex-direction:column; gap:8px; margin-top:12px}
-  .phase-item{display:flex; align-items:center; gap:10px; flex-wrap:wrap; font-size:13px;
-    border:1px solid var(--line); border-radius:9px; padding:7px 10px; background:#fffefb}
-  .phase-item input[type=color]{width:28px; height:28px; border:1px solid var(--line); border-radius:6px; padding:1px; background:#fff; cursor:pointer; flex:0 0 auto}
-  .ph-name{border:1px solid var(--line); border-radius:6px; padding:5px 8px; font-size:13px; font-weight:700; color:var(--ink); background:#fff; min-width:130px; flex:1 1 130px}
-  .ph-yr{font-size:12px; color:var(--ink-soft); display:inline-flex; align-items:center; gap:5px}
-  .ph-num{width:74px; border:1px solid var(--line); border-radius:6px; padding:4px 6px; font-size:13px; background:#fff; color:var(--ink)}
-  .agehint{color:var(--accent); font-weight:600}
-  .phase-item button.del{margin-left:auto; border:1px solid var(--line); background:#fff;
-    color:var(--ink-soft); border-radius:6px; width:28px; height:26px; cursor:pointer}
-  .phase-item button.del:hover{border-color:var(--neg); color:var(--neg)}
-
-  details.yrwrap{margin:16px 0}
-  details.yrwrap>summary{cursor:pointer; font-weight:700; color:var(--accent); font-size:14px; padding:6px 0}
-  .rowsec{font-size:12px; font-weight:700; color:var(--accent); margin:12px 2px 6px}
-  .rowtools{display:flex; gap:14px; align-items:center; flex-wrap:wrap; margin:2px 2px 4px; font-size:12px; color:var(--ink-soft)}
-  .yrhead,.yrow{display:grid; grid-template-columns:84px 78px 1fr 46px 2fr; gap:10px; align-items:center}
-  .yrhead{font-size:11px; color:var(--ink-soft); padding:4px 12px 2px; font-weight:700}
-  .yrow{background:var(--card); border:1px solid var(--line); border-radius:9px;
-    padding:7px 12px; box-shadow:var(--shadow); margin-bottom:6px}
-  .yrow.stage{background:#fff7ec}
-  .yr{font-weight:700; font-size:14px}
-  .stname{width:100%; border:1px solid var(--line); background:#fff; border-radius:6px; padding:5px 7px; font-size:13px; font-weight:700; color:var(--ink)}
-  .agerange{display:inline-flex; align-items:center; gap:3px; font-size:12px; color:var(--ink-soft)}
-  .agerange input{width:38px; border:1px solid var(--line); background:#fff; border-radius:6px; padding:4px 4px; font-size:12px; text-align:center; color:var(--ink)}
-  .yrow input[type=number].age{width:100%; border:1px solid var(--line); background:#fffefb; border-radius:6px; padding:5px 6px; font-size:13px; color:var(--ink)}
-  .yrow input[type=range]{width:100%; accent-color:var(--accent)}
-  .sc{font-variant-numeric:tabular-nums; font-weight:700; font-size:13px; text-align:right}
+  .seglist{display:flex; flex-direction:column; gap:8px}
+  .segrow{display:flex; gap:10px; align-items:center; flex-wrap:wrap;
+    background:#fff7ec; border:1px solid var(--line); border-radius:10px; padding:9px 12px; box-shadow:var(--shadow)}
+  .segrow input[type=color]{width:30px; height:30px; border:1px solid var(--line); border-radius:7px; padding:1px; background:#fff; cursor:pointer; flex:0 0 auto}
+  .segrow .nm{flex:1 1 110px; min-width:90px; border:1px solid var(--line); background:#fff; border-radius:7px; padding:6px 9px; font-size:14px; font-weight:700; color:var(--ink)}
+  .agebox{display:inline-flex; align-items:center; gap:4px; font-size:12px; color:var(--ink-soft); flex:0 0 auto}
+  .agebox input{width:46px; border:1px solid var(--line); background:#fff; border-radius:7px; padding:6px 4px; font-size:13px; text-align:center; color:var(--ink)}
+  .segrow .sl{flex:2 1 200px; display:flex; align-items:center; gap:10px; min-width:180px}
+  .segrow .sl input[type=range]{flex:1; accent-color:var(--accent)}
+  .sc{font-variant-numeric:tabular-nums; font-weight:700; font-size:14px; width:46px; text-align:right}
   .sc.p{color:var(--pos)} .sc.n{color:var(--neg)} .sc.z{color:var(--ink-soft)}
-  .yrow input[type=text].memo{width:100%; border:1px solid var(--line); background:#fffefb;
-    border-radius:6px; padding:5px 8px; font-size:13px; color:var(--ink)}
+  .segrow .mn{flex:3 1 240px; min-width:180px; border:1px solid var(--line); background:#fffefb; border-radius:7px; padding:6px 9px; font-size:13px; color:var(--ink)}
+  .segrow .del{border:1px solid var(--line); background:#fff; color:var(--ink-soft); border-radius:7px; width:30px; height:30px; cursor:pointer; flex:0 0 auto}
+  .segrow .del:hover{border-color:var(--neg); color:var(--neg)}
+  .yhint{font-size:11px; color:var(--accent); flex:0 0 auto}
 
   .bar{display:flex; gap:10px; flex-wrap:wrap; margin:16px 0 0; align-items:center; justify-content:center}
   .btn{border:1px solid var(--line); background:var(--card); color:var(--ink);
@@ -87,31 +65,28 @@
   .btn:hover{border-color:var(--accent); color:var(--accent)}
   .btn.primary{background:var(--accent); color:#fff; border-color:var(--accent)}
   .btn.primary:hover{background:var(--add-dark); border-color:var(--add-dark)}
-  .btn.add{background:var(--add); color:#fff; border:none; border-radius:10px; padding:9px 20px; box-shadow:0 3px 10px #ed6a1e40}
+  .btn.add{background:var(--add); color:#fff; border:none; border-radius:10px; padding:11px 24px; box-shadow:0 3px 10px #ed6a1e40}
   .btn.add:hover{background:var(--add-dark)}
   .btn.ghost{color:var(--ink-soft)}
+  .addrow{display:flex; justify-content:center; margin:14px 0 4px}
   .saved{font-size:12px; color:var(--ink-soft)}
 
   .modal{position:fixed; inset:0; background:#3a2c22aa; z-index:9000; display:flex; align-items:center; justify-content:center; padding:18px}
-  .modal .box{background:var(--card); border-radius:14px; padding:20px; width:min(420px,94vw); box-shadow:0 12px 50px #0005}
+  .modal .box{background:var(--card); border-radius:14px; padding:20px; width:min(440px,94vw); box-shadow:0 12px 50px #0005}
   .modal h3{margin:0 0 12px; font-size:16px; color:var(--accent)}
   .modal .frow{display:flex; gap:12px; margin-bottom:12px}
   .modal label{font-size:12px; color:var(--ink-soft); display:flex; flex-direction:column; gap:4px; flex:1}
   .modal input,.modal textarea{border:1px solid var(--line); background:#fffefb; border-radius:8px; padding:8px 10px; font-size:14px; color:var(--ink); font-family:inherit}
+  .modal input[type=color]{padding:2px; height:38px}
   .modal textarea{min-height:84px; resize:vertical}
   .modal .acts{display:flex; gap:10px; justify-content:flex-end; margin-top:6px}
-  @media(max-width:600px){
-    .yrhead,.yrow{grid-template-columns:72px 66px 1fr 40px}
-    .yrow .memo-cell{grid-column:1 / -1}
-    .yrhead .memo-h{display:none}
-  }
 </style>
 </head>
 <body>
 <div class="wrap">
   <header>
     <h1>人生グラフ — ライフライン</h1>
-    <p class="sub">幼少期〜高校は「ひとまとまりの点」、19歳以降は年ごとに、充実度（−100〜+100）と出来事を記録します。</p>
+    <p class="sub">年齢で自由に区切ったライフステージごとに、充実度（−100〜+100）と出来事を記録します。1年だけの区分も作れます。</p>
   </header>
 
   <div class="panel">
@@ -119,10 +94,9 @@
     <div class="fields">
       <label>クライエント名／ID（任意）<input id="clientName" type="text" placeholder="例：A.S さん"></label>
       <label>記録日（任意）<input id="sessionDate" type="text" placeholder="例：2026/06/10"></label>
-      <label>生まれ年<input id="birthYear" type="number" value="1988"></label>
-      <label>終了年<input id="endYear" type="number" value="2026"></label>
+      <label>生まれ年（西暦表示用・任意）<input id="birthYear" type="number" value="1988"></label>
     </div>
-    <p class="saved" style="margin:8px 0 0">※ 幼少期〜高校は年齢区分（編集可）でひとまとまり。続く年ごとの点は「高校の終了年齢＋1歳」から始まります。</p>
+    <p class="saved" style="margin:8px 0 0">※ 生まれ年を入れると、各区分の西暦も表示されます。空欄でも年齢だけで使えます。</p>
   </div>
 
   <div class="chartcard">
@@ -131,9 +105,9 @@
         <button id="modeView" class="on">🖐 閲覧・スクロール</button>
         <button id="modeDraw">✏️ ドラッグ入力</button>
       </div>
-      <button class="tbtn on" id="bubBtn">💬 吹き出し表示</button>
+      <button class="tbtn on" id="bubBtn">💬 コメント表示</button>
     </div>
-    <p class="hint" id="modeHint">点をタップ → その場で内容・点数・メモを編集できます。</p>
+    <p class="hint" id="modeHint">点をタップ → その場で区分名・年齢・点数・メモを編集できます。</p>
     <div class="plotscroll">
       <svg id="yaxis" class="yaxis"></svg>
       <svg id="chart" aria-label="人生グラフ"></svg>
@@ -141,28 +115,11 @@
   </div>
 
   <div class="panel">
-    <h2>期間（フェーズ）— 19歳以降の年に色とステータス名</h2>
-    <div class="phase-add">
-      <label>開始年<select id="phStart"></select></label>
-      <label>終了年<select id="phEnd"></select></label>
-      <label>名前<input id="phName" type="text" placeholder="例：IT起業務め／◯◯期"></label>
-      <label>色<input id="phColor" type="color" value="#d3705a"></label>
-      <button class="btn add" id="phAdd">＋ 追加</button>
-    </div>
-    <div class="phase-list" id="phaseList"></div>
+    <h2>ライフステージ（年齢区分）</h2>
+    <p class="saved" style="margin:-4px 0 10px">開始＝終了 にすると「1年だけ」の区分になります。並びは年齢順に自動整列。</p>
+    <div class="seglist" id="seglist"></div>
+    <div class="addrow"><button class="btn add" id="addSeg">＋ 区分を追加</button></div>
   </div>
-
-  <details class="yrwrap" open>
-    <summary>入力一覧</summary>
-    <div class="yrhead">
-      <div>区分／年</div><div>年齢</div><div>充実度</div><div>点</div><div class="memo-h">出来事メモ</div>
-    </div>
-    <div class="rowtools">
-      <label style="display:flex;align-items:center;gap:6px;cursor:pointer">
-        <input type="checkbox" id="showAll"> 年ごとの未入力も表示</label>
-    </div>
-    <div id="rows"></div>
-  </details>
 
   <div class="bar">
     <button class="btn primary" id="pngBtn">画像で書き出し（PNG）</button>
@@ -172,183 +129,113 @@
 </div>
 
 <script>
-let cfg={birthYear:1988,endYear:2026};
-let stages=[
-  {id:"s0",name:"幼少期",a0:0,a1:6,score:0,memo:"",color:"#e0913a"},
-  {id:"s1",name:"小学生",a0:7,a1:12,score:0,memo:"",color:"#7fa96a"},
-  {id:"s2",name:"中学生",a0:13,a1:15,score:0,memo:"",color:"#5a9bb0"},
-  {id:"s3",name:"高校生",a0:16,a1:18,score:0,memo:"",color:"#6f7fc4"},
+const PALETTE=["#e0913a","#7fa96a","#5a9bb0","#6f7fc4","#a878c0","#d3705a","#cf9b3f","#5fae93","#c2698f","#8a8f5c"];
+let cfg={birthYear:1988};
+let segs=[
+  {id:"s0",name:"幼少期",a0:0,a1:6,color:"#e0913a",score:0,memo:""},
+  {id:"s1",name:"小学生",a0:7,a1:12,color:"#7fa96a",score:0,memo:""},
+  {id:"s2",name:"中学生",a0:13,a1:15,color:"#5a9bb0",score:0,memo:""},
+  {id:"s3",name:"高校生",a0:16,a1:18,color:"#6f7fc4",score:0,memo:""},
 ];
-let years=[];      // {year,age,score,memo}
-let phases=[];     // {id,start,end,name,color}
 let meta={clientName:"",sessionDate:""};
-let showBubbles=true, mode="view", showAll=false;
+let showBubbles=true, mode="view";
 
 const $=id=>document.getElementById(id);
-const rowsEl=$("rows"), chart=$("chart"), yaxisEl=$("yaxis"), savedMsg=$("savedMsg");
+const listEl=$("seglist"), chart=$("chart"), yaxisEl=$("yaxis"), savedMsg=$("savedMsg");
 const esc=s=>(s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
 const fmt=v=>(v>0?"+":"")+v;
-const hasData=y=> y.score!==0 || (y.memo&&y.memo.trim());
-
-/* 統合ポイント（左から：4区分 → 年ごと） */
-const nPts=()=>stages.length+years.length;
-const ptScore=i=> i<stages.length?stages[i].score:years[i-stages.length].score;
-const ptMemo =i=> i<stages.length?stages[i].memo :years[i-stages.length].memo;
-function setPtScore(i,v){ if(i<stages.length)stages[i].score=v; else years[i-stages.length].score=v; }
+const nPts=()=>segs.length;
+const ptScore=i=>segs[i].score, ptMemo=i=>segs[i].memo;
+const setPtScore=(i,v)=>segs[i].score=v;
+function sortSegs(){ segs.sort((a,b)=>(a.a0-b.a0)||(a.a1-b.a1)); }
 
 /* ---------- 保存 ---------- */
-async function save(){ try{ await window.storage.set("lifegraph:v4",JSON.stringify({cfg,stages,years,phases,meta})); flash("保存しました"); }catch(e){} }
+async function save(){ try{ await window.storage.set("lifegraph:v5",JSON.stringify({cfg,segs,meta})); flash("保存しました"); }catch(e){} }
 function flash(t){ savedMsg.textContent=t; clearTimeout(flash._t); flash._t=setTimeout(()=>savedMsg.textContent="",1500); }
 async function load(){
-  try{ const r=await window.storage.get("lifegraph:v4");
-    if(r&&r.value){ const o=JSON.parse(r.value); cfg=o.cfg||cfg; stages=o.stages||stages; years=o.years||[]; phases=o.phases||[]; meta=o.meta||meta; }
+  try{ const r=await window.storage.get("lifegraph:v5");
+    if(r&&r.value){ const o=JSON.parse(r.value); cfg=o.cfg||cfg; segs=o.segs||segs; meta=o.meta||meta; }
   }catch(e){}
-  if(!years.length) regenYears(false);
-  $("clientName").value=meta.clientName||""; $("sessionDate").value=meta.sessionDate||"";
-  $("birthYear").value=cfg.birthYear; $("endYear").value=cfg.endYear;
+  $("clientName").value=meta.clientName||""; $("sessionDate").value=meta.sessionDate||""; $("birthYear").value=cfg.birthYear||"";
 }
 
-/* ---------- 年データ（19歳以降） ---------- */
-function yearStartAge(){ return Math.max(...stages.map(s=>s.a1))+1; }
-function regenYears(recalcAge){
-  const fyAge=yearStartAge();
-  let fy=cfg.birthYear+fyAge, ey=cfg.endYear; if(ey<fy)ey=fy; if(ey-fy>120)ey=fy+120;
-  const prev={}; years.forEach(y=>prev[y.year]=y);
-  const arr=[];
-  for(let y=fy;y<=ey;y++){ const old=prev[y];
-    let age=(recalcAge||!old)?(cfg.birthYear? y-cfg.birthYear : ""):old.age;
-    arr.push({year:y,age,score:old?old.score:0,memo:old?old.memo:""}); }
-  years=arr;
-  const s=fy,e=ey;
-  phases=phases.filter(p=>p.end>=s&&p.start<=e).map(p=>({...p,start:Math.max(p.start,s),end:Math.min(p.end,e)}));
-}
-
-/* ---------- 行UI ---------- */
+/* ---------- 区分リストUI ---------- */
 function scClass(v){return v>0?"p":v<0?"n":"z";}
-function renderRows(){
-  let h=`<div class="rowsec">■ ライフステージ（各区分＝ひとまとまりの点）</div>`;
-  stages.forEach((s,si)=>{
-    h+=`<div class="yrow stage">
-      <input class="stname" type="text" value="${esc(s.name)}" data-s="${si}" data-k="name">
-      <span class="agerange"><input type="number" value="${s.a0}" data-s="${si}" data-k="a0">–<input type="number" value="${s.a1}" data-s="${si}" data-k="a1">歳</span>
-      <input type="range" min="-100" max="100" step="1" value="${s.score}" data-s="${si}" data-k="score">
-      <div class="sc ${scClass(s.score)}" data-ssc="${si}">${fmt(s.score)}</div>
-      <div class="memo-cell"><input class="memo" type="text" value="${esc(s.memo)}" data-s="${si}" data-k="memo" placeholder="この時期の出来事…"></div>
-    </div>`;
-  });
-  const vis=showAll?years:years.filter(hasData);
-  const range=years.length?`${years[0].year}〜${years[years.length-1].year}`:"—";
-  h+=`<div class="rowsec">■ 年ごと（${range}）　<span class="saved">${showAll?'全'+years.length+'年':'入力済み'+vis.length+'件 / 全'+years.length+'年'}</span></div>`;
-  if(!vis.length) h+=`<div class="saved" style="padding:6px 12px">未入力です。グラフを「✏️ ドラッグ入力」でなぞるか、点をタップして入力してください。</div>`;
-  vis.forEach(y=>{ const i=years.indexOf(y);
-    h+=`<div class="yrow">
-      <div class="yr">${y.year}</div>
-      <input class="age" type="number" value="${y.age}" data-y="${i}" data-k="age" placeholder="歳">
-      <input type="range" min="-100" max="100" step="1" value="${y.score}" data-y="${i}" data-k="score">
-      <div class="sc ${scClass(y.score)}" data-ysc="${i}">${fmt(y.score)}</div>
-      <div class="memo-cell"><input class="memo" type="text" value="${esc(y.memo)}" data-y="${i}" data-k="memo" placeholder="この年の出来事…"></div>
-    </div>`; });
-  rowsEl.innerHTML=h;
+function yhint(s){ if(!cfg.birthYear)return ""; const y0=cfg.birthYear+s.a0, y1=cfg.birthYear+s.a1;
+  return s.a0===s.a1? `${y0}` : `${y0}〜${y1}`; }
+function renderList(){
+  listEl.innerHTML=segs.map((s,i)=>`
+    <div class="segrow" data-id="${s.id}">
+      <input type="color" value="${s.color}" data-k="color" title="色">
+      <input class="nm" type="text" value="${esc(s.name)}" data-k="name" placeholder="区分名">
+      <span class="agebox"><input type="number" value="${s.a0}" data-k="a0">–<input type="number" value="${s.a1}" data-k="a1">歳</span>
+      <span class="yhint">${yhint(s)}</span>
+      <span class="sl"><input type="range" min="-100" max="100" step="1" value="${s.score}" data-k="score">
+        <span class="sc ${scClass(s.score)}" data-sc="${s.id}">${fmt(s.score)}</span></span>
+      <input class="mn" type="text" value="${esc(s.memo)}" data-k="memo" placeholder="この時期の出来事…">
+      <button class="del" data-del="${s.id}" title="削除">✕</button>
+    </div>`).join("");
 }
-let rafId=null;
-function drawThrottled(){ if(rafId)return; rafId=requestAnimationFrame(()=>{rafId=null; draw();}); }
+let rafId=null; function drawThrottled(){ if(rafId)return; rafId=requestAnimationFrame(()=>{rafId=null; draw();}); }
 
-rowsEl.addEventListener("input",e=>{
-  const t=e.target, k=t.dataset.k; if(!k)return;
-  if(t.dataset.s!=null){ const si=+t.dataset.s, s=stages[si];
-    if(k==="name")s.name=t.value;
-    else if(k==="score"){ s.score=+t.value; const sc=document.querySelector(`[data-ssc="${si}"]`); sc.textContent=fmt(s.score); sc.className="sc "+scClass(s.score); }
-    else if(k==="a0"||k==="a1"){ s[k]=t.value===""?0:+t.value; }
-    else if(k==="memo")s.memo=t.value;
-    drawThrottled(); return;
-  }
-  if(t.dataset.y!=null){ const i=+t.dataset.y, y=years[i];
-    if(k==="score"){ y.score=+t.value; const sc=document.querySelector(`[data-ysc="${i}"]`); sc.textContent=fmt(y.score); sc.className="sc "+scClass(y.score); }
-    else if(k==="age"){ y.age=t.value===""?"":+t.value; }
-    else if(k==="memo")y.memo=t.value;
-    drawThrottled();
-  }
+listEl.addEventListener("input",e=>{
+  const row=e.target.closest(".segrow"); if(!row)return; const k=e.target.dataset.k; if(!k)return;
+  const s=segs.find(x=>x.id===row.dataset.id); if(!s)return;
+  if(k==="name")s.name=e.target.value;
+  else if(k==="color")s.color=e.target.value;
+  else if(k==="memo")s.memo=e.target.value;
+  else if(k==="score"){ s.score=+e.target.value; const sc=document.querySelector(`[data-sc="${s.id}"]`); sc.textContent=fmt(s.score); sc.className="sc "+scClass(s.score); }
+  else if(k==="a0"||k==="a1"){ s[k]=e.target.value===""?0:+e.target.value; }
+  drawThrottled();
 });
-rowsEl.addEventListener("change",e=>{
-  if(e.target.dataset.s!=null && (e.target.dataset.k==="a0"||e.target.dataset.k==="a1")){ regenYears(false); refreshAll(); }
+listEl.addEventListener("change",e=>{
+  const row=e.target.closest(".segrow"); if(row){ const s=segs.find(x=>x.id===row.dataset.id);
+    if(s&&s.a0>s.a1)[s.a0,s.a1]=[s.a1,s.a0]; sortSegs(); renderList(); draw(); }
   save();
 });
-$("showAll").onchange=e=>{ showAll=e.target.checked; renderRows(); };
+listEl.addEventListener("click",e=>{ const b=e.target.closest("[data-del]"); if(!b)return;
+  if(segs.length<=1){ alert("区分は最低1つ必要です。"); return; }
+  segs=segs.filter(s=>s.id!==b.dataset.del); renderList(); draw(); save(); });
 
-/* ---------- フェーズUI（年のみ） ---------- */
-function fillYearSelects(){
-  const opts=years.map(y=>`<option value="${y.year}">${y.year}（${y.age!==""?y.age+"歳":""}）</option>`).join("");
-  $("phStart").innerHTML=opts; $("phEnd").innerHTML=opts;
-  if(years.length) $("phEnd").value=years[years.length-1].year;
-}
-function renderPhases(){
-  if(!phases.length){ $("phaseList").innerHTML=`<div class="saved">まだ期間がありません。19歳以降の年を選んで追加してください。</div>`; return; }
-  $("phaseList").innerHTML=phases.map(p=>{
-    const sa=cfg.birthYear?`<span class="agehint">${p.start-cfg.birthYear}歳</span>`:"";
-    const ea=cfg.birthYear?`<span class="agehint">${p.end-cfg.birthYear}歳</span>`:"";
-    return `<div class="phase-item" data-id="${p.id}">
-      <input type="color" value="${p.color}" data-k="color" title="色">
-      <input type="text" class="ph-name" value="${esc(p.name)}" data-k="name" placeholder="期間名">
-      <span class="ph-yr">開始<input type="number" class="ph-num" value="${p.start}" data-k="start">${sa}</span>
-      <span class="ph-yr">終了<input type="number" class="ph-num" value="${p.end}" data-k="end">${ea}</span>
-      <button class="del" data-del="${p.id}" title="削除">✕</button>
-    </div>`; }).join("");
-}
-$("phAdd").onclick=()=>{ if(!years.length)return; let s=+$("phStart").value,e=+$("phEnd").value; if(s>e)[s,e]=[e,s];
-  const name=$("phName").value.trim()||"（無題の期間）";
-  phases.push({id:Date.now(),start:s,end:e,name,color:$("phColor").value}); $("phName").value="";
-  renderPhases(); draw(); save(); };
-$("phaseList").addEventListener("input",e=>{
-  const item=e.target.closest(".phase-item"); if(!item)return; const k=e.target.dataset.k; if(!k)return;
-  const p=phases.find(x=>x.id==item.dataset.id); if(!p)return;
-  if(k==="name")p.name=e.target.value;
-  else if(k==="color")p.color=e.target.value;
-  else { let v=+e.target.value; if(years.length){ const s=years[0].year,en=years[years.length-1].year; v=Math.max(s,Math.min(en,v)); } p[k]=v; }
-  draw();
-});
-$("phaseList").addEventListener("change",e=>{
-  const item=e.target.closest(".phase-item"); if(!item)return; const p=phases.find(x=>x.id==item.dataset.id);
-  if(p&&p.start>p.end)[p.start,p.end]=[p.end,p.start]; renderPhases(); draw(); save();
-});
-$("phaseList").addEventListener("click",e=>{ const b=e.target.closest("[data-del]"); if(!b)return;
-  phases=phases.filter(p=>p.id!=b.dataset.del); renderPhases(); draw(); save(); });
+$("addSeg").onclick=()=>{
+  const mx=segs.length?Math.max(...segs.map(s=>s.a1)):-1; const a=mx+1;
+  segs.push({id:"s"+Date.now(),name:"新しい区分",a0:a,a1:a,color:PALETTE[segs.length%PALETTE.length],score:0,memo:""});
+  sortSegs(); renderList(); draw(); save();
+};
 
 /* ---------- セットアップ ---------- */
 $("clientName").addEventListener("input",e=>meta.clientName=e.target.value);
 $("sessionDate").addEventListener("input",e=>meta.sessionDate=e.target.value);
 ["clientName","sessionDate"].forEach(id=>$(id).addEventListener("change",save));
-$("birthYear").addEventListener("change",e=>{cfg.birthYear=+e.target.value||0; regenYears(true); refreshAll(); save();});
-$("endYear").addEventListener("change",e=>{cfg.endYear=+e.target.value||cfg.endYear; regenYears(false); refreshAll(); save();});
+$("birthYear").addEventListener("change",e=>{ cfg.birthYear=e.target.value===""?0:+e.target.value; renderList(); draw(); save(); });
 
 function setMode(m){ mode=m;
   $("modeView").classList.toggle("on",m==="view"); $("modeDraw").classList.toggle("on",m==="draw");
   chart.classList.toggle("draw",m==="draw");
-  $("modeHint").textContent=m==="draw"?"点を上下にドラッグ／なぞって点数を入力。横移動は閲覧モードでスクロール。":"点をタップ → その場で内容・点数・メモを編集できます。";
+  $("modeHint").textContent=m==="draw"?"点を上下にドラッグ／なぞって点数を入力。横移動は閲覧モードでスクロール。":"点をタップ → その場で区分名・年齢・点数・メモを編集できます。";
 }
 $("modeView").onclick=()=>setMode("view"); $("modeDraw").onclick=()=>setMode("draw");
-$("bubBtn").onclick=()=>{ showBubbles=!showBubbles; $("bubBtn").classList.toggle("on",showBubbles); $("bubBtn").textContent=showBubbles?"💬 吹き出し表示":"💬 印のみ表示"; draw(); };
+$("bubBtn").onclick=()=>{ showBubbles=!showBubbles; $("bubBtn").classList.toggle("on",showBubbles); $("bubBtn").textContent=showBubbles?"💬 コメント表示":"💬 点のみ表示"; draw(); };
 $("resetBtn").onclick=()=>{ if(confirm("すべての入力を消去して初期状態に戻します。よろしいですか？")){
-  cfg={birthYear:1988,endYear:2026};
-  stages=[{id:"s0",name:"幼少期",a0:0,a1:6,score:0,memo:"",color:"#e0913a"},{id:"s1",name:"小学生",a0:7,a1:12,score:0,memo:"",color:"#7fa96a"},{id:"s2",name:"中学生",a0:13,a1:15,score:0,memo:"",color:"#5a9bb0"},{id:"s3",name:"高校生",a0:16,a1:18,score:0,memo:"",color:"#6f7fc4"}];
-  years=[]; phases=[]; meta={clientName:"",sessionDate:""}; regenYears(false);
-  $("clientName").value=""; $("sessionDate").value=""; $("birthYear").value=1988; $("endYear").value=2026; refreshAll(); save(); } };
+  cfg={birthYear:1988}; meta={clientName:"",sessionDate:""};
+  segs=[{id:"s0",name:"幼少期",a0:0,a1:6,color:"#e0913a",score:0,memo:""},{id:"s1",name:"小学生",a0:7,a1:12,color:"#7fa96a",score:0,memo:""},{id:"s2",name:"中学生",a0:13,a1:15,color:"#5a9bb0",score:0,memo:""},{id:"s3",name:"高校生",a0:16,a1:18,color:"#6f7fc4",score:0,memo:""}];
+  $("clientName").value=""; $("sessionDate").value=""; $("birthYear").value=1988; refreshAll(); save(); } };
 
-function refreshAll(){ renderRows(); fillYearSelects(); renderPhases(); draw(); }
+function refreshAll(){ renderList(); draw(); }
 
 /* ---------- レイアウト ---------- */
 let LW=900,LH=640,H=600;
 const AXISW=54, PADL=22, padR=48, padTop=14;
 const CATH=28, AXLABH=44, GAP=8, PLOTH=300;
-const STAGE_SP=116, YEAR_SP=50;          // 区分=広め / 年=狭め
 const plotTop=padTop+CATH+AXLABH+GAP, plotBottom=plotTop+PLOTH;
 const yOf=v=>plotTop+(100-v)/200*PLOTH;
+const segWidth=s=>Math.max(72,Math.min(210,72+(s.a1-s.a0)*11)); // 期間が長いほど広く（1年=72px）
 
 let LAY={cx:[],L:[],R:[],totalW:520};
 function computeLayout(){
-  const w=[]; for(let i=0;i<nPts();i++) w.push(i<stages.length?STAGE_SP:YEAR_SP);
   const cx=[],L=[],R=[]; let cur=PADL;
-  for(let i=0;i<w.length;i++){ L[i]=cur; cx[i]=cur+w[i]/2; cur+=w[i]; R[i]=cur; }
-  LAY={cx,L,R,totalW:Math.max(520,cur-PADL)}; return LAY;
+  segs.forEach((s,i)=>{ const w=segWidth(s); L[i]=cur; cx[i]=cur+w/2; cur+=w; R[i]=cur; });
+  LAY={cx,L,R,totalW:Math.max(420,cur-PADL)}; return LAY;
 }
 function plotW(){ return LAY.totalW; }
 function xOf(i){ return LAY.cx[i]!==undefined? LAY.cx[i] : PADL+LAY.totalW/2; }
@@ -375,20 +262,15 @@ function draw(){
   computeLayout();
   const n=nPts(), pW=plotW(), CW=PADL+pW+padR, GX1=PADL+pW, yZero=yOf(0);
 
-  // コメント（全件）を下部に段違い配置するためのレーン計算
-  const cLineH=15,cPad=7,cFW=11,cFS=11,cGapX=8;
-  const ROW=3*cLineH+cPad*2+10;
-  const commentTop=plotBottom+30;
+  // 下部コメント（全件）のレーン計算
+  const cLineH=15,cPad=7,cFW=11,cFS=11,cGapX=8, ROW=3*cLineH+cPad*2+10, commentTop=plotBottom+30;
   let bubbles=[], numLanes=0;
   if(showBubbles){
-    const list=[];
-    for(let i=0;i<n;i++){ const m=ptMemo(i); if(m&&m.trim()) list.push({i,x:xOf(i),y:yOf(ptScore(i)),memo:m.trim()}); }
+    const list=[]; for(let i=0;i<n;i++){ const m=ptMemo(i); if(m&&m.trim()) list.push({i,x:xOf(i),y:yOf(ptScore(i)),memo:m.trim()}); }
     bubbles=list.map(m=>{ const lines=wrapText(m.memo);
       const bw=Math.max(...lines.map(l=>l.length))*cFW+cPad*2, bh=lines.length*cLineH+cPad*2;
-      const bx=Math.max(0,Math.min(m.x-bw/2,GX1-bw));
-      return {...m,lines,bw,bh,bx}; });
-    const laneRight=[];
-    bubbles.forEach(b=>{ let lane=0; for(;lane<laneRight.length;lane++){ if(b.bx>laneRight[lane]+cGapX) break; }
+      const bx=Math.max(0,Math.min(m.x-bw/2,GX1-bw)); return {...m,lines,bw,bh,bx}; });
+    const laneRight=[]; bubbles.forEach(b=>{ let lane=0; for(;lane<laneRight.length;lane++){ if(b.bx>laneRight[lane]+cGapX) break; }
       if(lane===laneRight.length) laneRight.push(0); b.lane=lane; laneRight[lane]=b.bx+b.bw; });
     numLanes=laneRight.length;
   }
@@ -398,13 +280,11 @@ function draw(){
   drawAxis();
   chart.setAttribute("viewBox",`0 0 ${CW} ${H}`); chart.setAttribute("width",CW); chart.setAttribute("height",H);
   let s="";
-
-  // ゾーン背景
   s+=`<rect x="0" y="${plotTop}" width="${GX1}" height="${yZero-plotTop}" fill="var(--pos-fill)"/>`;
   s+=`<rect x="0" y="${yZero}" width="${GX1}" height="${plotBottom-yZero}" fill="var(--neg-fill)"/>`;
 
-  // 上部カテゴリー：ステージ色帯（プロット内）＋名前ピル（最上段）
-  stages.forEach((st,i)=>{ const x=xOf(i);
+  // 上部カテゴリー（色帯＋名前ピル）
+  segs.forEach((st,i)=>{ const x=xOf(i);
     const X=Math.max(0,LAY.L[i]+3), Xw=Math.min(GX1,LAY.R[i]-3)-X;
     s+=`<rect x="${X}" y="${plotTop}" width="${Xw}" height="${PLOTH}" fill="${st.color}" opacity="0.16"/>`;
     s+=`<rect x="${X}" y="${plotTop}" width="2" height="${PLOTH}" fill="${st.color}" opacity="0.5"/>`;
@@ -413,33 +293,14 @@ function draw(){
     s+=`<rect x="${x-w/2}" y="${padTop}" width="${w}" height="22" rx="6" fill="${st.color}" opacity="0.92"/>`;
     s+=`<text x="${x}" y="${padTop+15}" text-anchor="middle" font-size="12" font-weight="700" fill="#fff">${esc(st.name)}</text>`;
   });
-  if(years.length){ const bx=LAY.L[stages.length];
-    s+=`<line x1="${bx}" y1="${plotTop}" x2="${bx}" y2="${plotBottom}" stroke="var(--axis)" stroke-width="1" stroke-dasharray="4 4" opacity="0.6"/>`; }
 
-  // フェーズ帯（年）＋名前ピル（最上段）
-  const yearIdx=yr=>{ const k=years.findIndex(y=>y.year===yr); return k<0?-1:stages.length+k; };
-  phases.forEach(p=>{ const si=yearIdx(p.start),ei=yearIdx(p.end); if(si<0||ei<0)return;
-    const X=Math.max(0,LAY.L[si]), Xw=Math.min(GX1,LAY.R[ei])-X;
-    s+=`<rect x="${X}" y="${plotTop}" width="${Xw}" height="${PLOTH}" fill="${p.color}" opacity="0.16"/>`;
-    s+=`<rect x="${X}" y="${plotTop}" width="2.5" height="${PLOTH}" fill="${p.color}" opacity="0.55"/>`;
-    s+=`<rect x="${X+Xw-2.5}" y="${plotTop}" width="2.5" height="${PLOTH}" fill="${p.color}" opacity="0.55"/>`;
-    const cx=X+Xw/2,w=p.name.length*12+16;
-    s+=`<rect x="${cx-w/2}" y="${padTop}" width="${w}" height="22" rx="6" fill="${p.color}" opacity="0.92"/>`;
-    s+=`<text x="${cx}" y="${padTop+15}" text-anchor="middle" font-size="12" font-weight="700" fill="#fff">${esc(p.name)}</text>`;
-  });
-
-  // 西暦・年齢（カテゴリーの下・プロットの上）
+  // 西暦・年齢
   const yearY=padTop+CATH+16, ageY=yearY+15;
-  for(let i=0;i<n;i++){ const px=xOf(i);
-    if(i<stages.length){ const st=stages[i];
-      const y0=cfg.birthYear?cfg.birthYear+st.a0:"", y1=cfg.birthYear?cfg.birthYear+st.a1:"";
-      if(y0!=="") s+=`<text x="${px}" y="${yearY}" text-anchor="middle" font-size="10" fill="var(--ink-soft)">${y0}〜${y1}</text>`;
-      s+=`<text x="${px}" y="${ageY}" text-anchor="middle" font-size="11" fill="var(--ink)" font-weight="600">${st.a0}〜${st.a1}歳</text>`;
-    } else { const y=years[i-stages.length];
-      s+=`<text x="${px}" y="${yearY}" text-anchor="middle" font-size="11" fill="var(--ink)" font-weight="600">${y.year}</text>`;
-      if(y.age!=="") s+=`<text x="${px}" y="${ageY}" text-anchor="middle" font-size="10" fill="var(--ink-soft)">${y.age}歳</text>`;
-    }
-  }
+  segs.forEach((st,i)=>{ const px=xOf(i);
+    if(cfg.birthYear){ const y0=cfg.birthYear+st.a0,y1=cfg.birthYear+st.a1;
+      s+=`<text x="${px}" y="${yearY}" text-anchor="middle" font-size="10" fill="var(--ink-soft)">${st.a0===st.a1?y0:y0+'〜'+y1}</text>`; }
+    s+=`<text x="${px}" y="${ageY}" text-anchor="middle" font-size="11" fill="var(--ink)" font-weight="600">${st.a0===st.a1?st.a0+'歳':st.a0+'〜'+st.a1+'歳'}</text>`;
+  });
 
   // グリッド
   [100,50,0,-50,-100].forEach(v=>{ const y=yOf(v),zero=v===0;
@@ -458,7 +319,7 @@ function draw(){
       s+=`<text x="${px}" y="${py+(above?-11:18)}" text-anchor="middle" font-size="10" fill="${col}" font-weight="700">${fmt(sc)}</text>`; }
   }
 
-  // 下部コメント（全件・段違い・非重複）
+  // 下部コメント（全件・段違い）
   bubbles.forEach(b=>{ const by=commentTop+b.lane*ROW;
     const lx=Math.max(b.bx+12,Math.min(b.x,b.bx+b.bw-12));
     s+=`<line x1="${b.x}" y1="${plotBottom}" x2="${lx}" y2="${by}" stroke="var(--accent)" stroke-width="1" opacity=".45"/>`;
@@ -479,38 +340,29 @@ let dragging=false;
 chart.addEventListener("pointerdown",e=>{ if(mode!=="draw")return; e.preventDefault();
   dragging=true; const p=svgPoint(e); setPtScore(idxFromX(p.x),scoreFromY(p.y)); drawThrottled(); chart.setPointerCapture(e.pointerId); });
 chart.addEventListener("pointermove",e=>{ if(!dragging)return; const p=svgPoint(e); setPtScore(idxFromX(p.x),scoreFromY(p.y)); drawThrottled(); });
-function endDrag(){ if(!dragging)return; dragging=false; renderRows(); save(); }
+function endDrag(){ if(!dragging)return; dragging=false; renderList(); save(); }
 chart.addEventListener("pointerup",endDrag); chart.addEventListener("pointercancel",endDrag);
-
 chart.addEventListener("click",e=>{ if(mode!=="view")return; const c=e.target.closest("[data-pt]"); if(!c)return; openEditor(+c.dataset.pt); });
 
 /* ---------- 編集モーダル ---------- */
 function openEditor(i){
-  let m=$("editModal"); if(m)m.remove(); m=document.createElement("div"); m.id="editModal"; m.className="modal";
-  const isStage=i<stages.length;
-  if(isStage){ const s=stages[i];
-    m.innerHTML=`<div class="box"><h3>${esc(s.name)}（区分）</h3>
-      <div class="frow"><label>区分名<input id="edName" type="text" value="${esc(s.name)}"></label></div>
-      <div class="frow"><label>開始年齢<input id="edA0" type="number" value="${s.a0}"></label>
-        <label>終了年齢<input id="edA1" type="number" value="${s.a1}"></label>
-        <label>点数<input id="edScore" type="number" min="-100" max="100" value="${s.score}"></label></div>
-      <label>出来事メモ<textarea id="edMemo" placeholder="この時期の出来事・気持ち…">${esc(s.memo)}</textarea></label>
-      <div class="acts"><button class="btn ghost" id="edClose">閉じる</button><button class="btn primary" id="edSave">保存</button></div></div>`;
-  } else { const y=years[i-stages.length];
-    m.innerHTML=`<div class="box"><h3>${y.year}年 の記録</h3>
-      <div class="frow"><label>年齢<input id="edAge" type="number" value="${y.age}"></label>
-        <label>点数（−100〜+100）<input id="edScore" type="number" min="-100" max="100" value="${y.score}"></label></div>
-      <label>出来事メモ<textarea id="edMemo" placeholder="この年の出来事・気持ち…">${esc(y.memo)}</textarea></label>
-      <div class="acts"><button class="btn ghost" id="edClose">閉じる</button><button class="btn primary" id="edSave">保存</button></div></div>`;
-  }
+  const s=segs[i]; let m=$("editModal"); if(m)m.remove(); m=document.createElement("div"); m.id="editModal"; m.className="modal";
+  m.innerHTML=`<div class="box"><h3>区分の編集</h3>
+    <div class="frow"><label>区分名<input id="edName" type="text" value="${esc(s.name)}"></label>
+      <label>色<input id="edColor" type="color" value="${s.color}"></label></div>
+    <div class="frow"><label>開始年齢<input id="edA0" type="number" value="${s.a0}"></label>
+      <label>終了年齢<input id="edA1" type="number" value="${s.a1}"></label>
+      <label>点数<input id="edScore" type="number" min="-100" max="100" value="${s.score}"></label></div>
+    <label>出来事メモ<textarea id="edMemo" placeholder="この時期の出来事・気持ち…">${esc(s.memo)}</textarea></label>
+    <div class="acts"><button class="btn ghost" id="edClose">閉じる</button><button class="btn primary" id="edSave">保存</button></div></div>`;
   document.body.appendChild(m);
   m.addEventListener("click",e=>{ if(e.target===m)m.remove(); });
   $("edClose").onclick=()=>m.remove();
   $("edSave").onclick=()=>{
-    const sc=Math.max(-100,Math.min(100,+($("edScore").value)||0));
-    if(isStage){ const s=stages[i]; s.name=$("edName").value||s.name; s.a0=+$("edA0").value||0; s.a1=+$("edA1").value||0; s.score=sc; s.memo=$("edMemo").value; regenYears(false); }
-    else { const y=years[i-stages.length]; const a=$("edAge").value; y.age=a===""?"":+a; y.score=sc; y.memo=$("edMemo").value; }
-    m.remove(); refreshAll(); save();
+    s.name=$("edName").value||s.name; s.color=$("edColor").value;
+    let a0=+$("edA0").value||0,a1=+$("edA1").value||0; if(a0>a1)[a0,a1]=[a1,a0]; s.a0=a0; s.a1=a1;
+    s.score=Math.max(-100,Math.min(100,+($("edScore").value)||0)); s.memo=$("edMemo").value;
+    m.remove(); sortSegs(); refreshAll(); save();
   };
   setTimeout(()=>$("edMemo").focus(),50);
 }
@@ -543,12 +395,12 @@ $("pngBtn").onclick=()=>{
         ctx.drawImage(img,0,0,cv.width,cv.height); const png=cv.toDataURL("image/png");
         const a=document.createElement("a"); a.href=png; a.download=(meta.clientName||"lifegraph")+".png"; document.body.appendChild(a); a.click(); a.remove(); showPngOverlay(png);
       }catch(err){ alert("画像生成に失敗：\n"+err.message); } };
-    img.onerror=()=>alert("画像読込に失敗しました。年数やメモを減らしてお試しください。");
+    img.onerror=()=>alert("画像読込に失敗しました。区分やメモを減らしてお試しください。");
     img.src=url;
   }catch(err){ alert("書き出しエラー：\n"+err.message); }
 };
 
-(async()=>{ await load(); refreshAll(); })();
+(async()=>{ await load(); sortSegs(); refreshAll(); })();
 </script>
 </body>
 </html>
